@@ -1,0 +1,290 @@
+1, Mario
+2, Mario, SMASH
+3, Mario, SMASH
+4, Donkey Kong
+5, Donkey Kong, SMASH
+6, Donkey Kong, SMASH
+7, Link
+8, Link, SMASH
+9, Link, SMASH
+10, Samus Aran
+11, Samus Aran, SMASH
+12, Samus Aran, SMASH
+13, Yoshi
+14, Yoshi, SMASH
+15, Yoshi, SMASH
+16, Kirby
+17, Kirby, SMASH
+18, Kirby, SMASH
+19, Fox McCloud
+20, Fox McCloud, SMASH
+21, Fox McCloud, SMASH
+22, Pikachu
+23, Pikachu, SMASH
+24, Pikachu, SMASH
+25, Ness
+26, Ness, SMASH
+27, Ness, SMASH
+28, Capt. Falcon
+29, Capt. Falcon, SMASH
+30, Capt. Falcon, SMASH
+31, Bowser
+32, Bowser, SMASH
+33, Bowser, SMASH
+34, Peach
+35, Peach, SMASH
+36, Peach, SMASH
+37, Ice Climbers
+38, Ice Climbers, SMASH
+39, Ice Climbers, SMASH
+40, Zelda
+41, Zelda, SMASH
+42, Zelda, SMASH
+43, Sheik
+44, Sheik, SMASH
+45, Sheik, SMASH
+46, Luigi
+47, Luigi, SMASH
+48, Luigi, SMASH
+49, Jigglypuff
+50, Jigglypuff, SMASH
+51, Jigglypuff, SMASH
+52, Mewtwo
+53, Mewtwo, SMASH
+54, Mewtwo, SMASH
+55, Marth
+56, Marth, SMASH
+57, Marth, SMASH
+58, Mr. Game & Watch
+59, Mr. Game & Watch, SMASH
+60, Mr. Game & Watch, SMASH
+61, Dr. Mario
+62, Dr. Mario, SMASH
+63, Dr. Mario, SMASH
+64, Ganondorf
+65, Ganondorf, SMASH
+66, Ganondorf, SMASH
+67, Falco Lombardi
+68, Falco Lombardi, SMASH
+69, Falco Lombardi, SMASH
+70, Young Link
+71, Young Link, SMASH
+72, Young Link, SMASH
+73, Pichu
+74, Pichu, SMASH
+75, Pichu, SMASH
+76, Roy
+77, Roy, SMASH
+78, Roy, SMASH
+79, Male Wire Frame
+80, Female Wire Frame
+81, Fighting Wire Frames
+82, Giga Bowser
+83, Master Hand
+84, Crazy Hand
+85, Food
+86, Maxim Tomato
+87, Heart Container
+88, Warp Star
+89, Ray Gun
+90, Super Scope
+91, Fire Flower
+92, Lip's Stick
+93, Star Rod
+94, Beam Sword
+95, Home-Run Bat
+96, Fan
+97, Hammer
+98, Green Shell
+99, Red Shell
+100, Flipper
+101, Freezie
+102, Mr. Saturn
+103, Bob-omb
+104, Motion-Sensor Bomb
+105, Super Mushroom
+106, Poison Mushroom
+107, Starman1
+108, Parasol
+109, Screw Attack
+110, Metal Box
+111, Bunny Hood
+112, Cloaking Device
+113, Barrel Cannon
+114, Party Ball
+115, Crate
+116, Barrel
+117, Capsule
+118, Egg
+119, Smash Coins
+120, Poké Ball
+121, Venusaur
+122, Charizard
+123, Squirtle
+124, Blastoise
+125, Clefairy
+126, Electrode
+127, Weezing
+128, Chansey
+129, Goldeen
+130, Staryu
+131, Snorlax
+132, Articuno
+133, Zapdos
+134, Moltres
+135, Mew
+136, Chikorita
+137, Cyndaquil
+138, Togepi
+139, Bellossom
+140, Marill
+141, Sudowoodo
+142, Unown
+143, Wobbuffet
+144, Scizor
+145, Porygon2
+146, Raikou
+147, Entei
+148, Suicune
+149, Lugia
+150, Ho-oh
+151, Celebi
+152, Toad
+153, Coin
+154, Vegetable
+155, Megavitamins
+156, Lon Lon Milk
+157, Kirby Hat 1
+158, Kirby Hat 2
+159, Kirby Hat 3
+160, Kirby Hat 4
+161, Kirby Hat 5
+162, Princess Peach's Castle
+163, Banzai Bill
+164, Lakitu
+165, Pidgit
+166, Birdo
+167, Klap Trap
+168, Shy Guys
+169, Pak E. Derm
+170, Tingle
+171, Moon
+172, Turtle
+173, Four Giants
+174, Master Sword
+175, Falcon Flyer
+176, F-Zero Racers
+177, Mute City
+178, Arwing
+179, Great Fox
+180, Peppy Hare
+181, Slippy Toad
+182, Kraid
+183, Chozo Statue
+184, Whispy Woods
+185, Fountain of Dreams
+186, UFO
+187, Pokémon Stadium
+188, Game & Watch
+189, Target
+190, Sandbag
+191, Battlefield
+192, Final Destination
+193, Goomba
+194, Koopa Troopa
+195, Koopa Paratroopa
+196, ReDead
+197, Octorok
+198, Like Like
+199, Topi
+200, Polar Bear
+201, Raccoon Mario
+202, Metal Mario
+203, Paper Mario
+204, Wario
+205, Plum
+206, Daisy
+207, Waluigi
+208, Thwomp
+209, Boo
+210, Koopa Clown Car
+211, Viruses
+212, Bucket
+213, Racing Kart
+214, Baby Mario
+215, Baby Bowser
+216, Raphael Raven
+217, Dixie Kong
+218, King K. Rool
+219, Goron
+220, Marin
+221, Majora's Mask
+222, Ocarina of Time
+223, Samurai Goroh
+224, Dr. Stewart
+225, Jody Summer
+226, Landmaster Tank
+227, Wolfen
+228, Andross 64
+229, Andross
+230, Samus's Starship
+231, Metroid
+232, Ridley
+233, Fire Kirby
+234, Fighter Kirby
+235, Ball Kirby
+236, Waddle Dee
+237, King Dedede
+238, Rick
+239, Gooey
+240, Meta-Knight
+241, Paula
+242, Jeff
+243, Poo
+244, Starman2
+245, Bulbasaur
+246, Poliwhirl
+247, Ditto
+248, Eevee
+249, Totodile
+250, Crobat
+251, Cleffa
+252, Igglybuff
+253, Steelix
+254, Heracross
+255, Meowth
+256, Professor Oak
+257, Misty
+258, ZERO-ONE
+259, Maruo Maruhige
+260, Ryota Hayami
+261, Kensuke Kimachi
+262, Love Giant
+263, Hate Giant
+264, Ray MK II
+265, Bayonette
+266, Annie
+267, Tom Nook
+268, Totakeke
+269, Mr. Resetti
+270, Heririn
+271, Alpha
+272, Vacuum Luigi
+273, Pikmin
+274, Captain Olimar
+275, Excitebike
+276, Donkey Kong Junior
+277, Ducks
+278, Bubbles
+279, Eggplant Man
+280, Mach Rider
+281, Balloon Fighter
+282, Stanley
+283, Pit
+284, Dr. Wright
+285, Donbe & Hikari
+286, Ayumi Tachibana
+287, Monster
+288, Sheriff
+289, Diskun
+290, GCN
