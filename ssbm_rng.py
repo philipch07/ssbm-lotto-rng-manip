@@ -167,7 +167,7 @@ def lotto_sim(num_owned_trophies: int, num_remaining_1p_lotto: int, src: int, tr
                     first_outcome_index = trophy_roll_actual_index
                 # Note that we don't use an else case here, because we did not get a trophy in the 1p/lotto category, so we loop again.
             # Similarly, we don't use an else case here because we did not get a new trophy, so we loop again.
-        # Now, the game advances the RNG one more time for an unknown reason.
+        # Now, the game advances the RNG one more time to determine the pose of the received trophy.
         next_rng()
     
     print('-------------------------------')
