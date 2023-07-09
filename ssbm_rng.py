@@ -1,8 +1,9 @@
 # Original work by Savestate
-# This code is adapted from gainge aka Judge9
+# Some of this code is adapted from gainge aka Judge9
 
 from typing import Optional
 
+# The following global values and constants are provided by Savestate, and the functions are slightly adapted from Savestate and Judge9
 #@804d5f90
 rng = 0x00000001
 a = 214013
@@ -42,6 +43,7 @@ def get_rand_float() -> int:
     top_bits = temp_rng >> 16
     return top_bits / 65536
 
+# this function is adapted from judge9
 def rng_diff(src: int, tgt: int) -> int:
     if src == tgt:
         return 0
@@ -56,6 +58,9 @@ def rng_diff(src: int, tgt: int) -> int:
         step += 1
     
     return step if temp_src == tgt else -1 * step
+
+# The following functions are all made by myself.
+# The code in the `old_code.py.example` file is a mix of my own and some from judge9.
 
 def get_hex(tgt: Optional[int] = None) -> int:
     while True:
