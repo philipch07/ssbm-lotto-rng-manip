@@ -98,7 +98,7 @@ def lotto_sim(num_owned_trophies: int, num_remaining_1p_lotto: int, src: int, tr
     resets = 0
     
     # Now we can start the lottery simulation.
-    print(f'Beginning lottery simulation with seed {hex(src)[:-1]}')
+    print(f'Beginning lottery simulation with seed {hex(src)}')
     while num_remaining_1p_lotto > 0:
         # The purpose of the first call is just to randomize the position of the coin animation as it decreases to 00.
         get_rand_int(15)
@@ -144,7 +144,7 @@ def lotto_sim(num_owned_trophies: int, num_remaining_1p_lotto: int, src: int, tr
             success_roll = get_rand_int(100)
             rem_trophies = NUM_AVAILABLE_TROPHIES - num_owned_trophies
             chance = int((rem_trophies / NUM_AVAILABLE_TROPHIES) * 100)
-            if (success_roll < chance):
+            if success_roll < chance:
                 # In this case, we get a new trophy.
                 trophy_roll_rand_int = get_rand_int(rem_trophies)
                 # The actual trophy that we roll is found by only counting through trophies that we dont have owned.
@@ -181,23 +181,6 @@ def lotto_sim(num_owned_trophies: int, num_remaining_1p_lotto: int, src: int, tr
     print(f'Total trophies collected: {num_owned_trophies}')
     print(f'Total number of resets: {resets}')
     print(f'Total coins spent {total_coins}')
-
-# RSS algrorithm
-def rss(init_possible_seeds: list[int], trophy_roll_cond_amt: int, successful: bool, chance: int, trophy_roll_int: int) -> list[int]:
-    ret = []
-    for i in init_possible_seeds:
-        set_rng(i)
-        get_rand_int(15)
-        use_coin()
-        temp_success_roll = get_rand_int(100)
-        temp_trophy_roll = get_rand_int(trophy_roll_cond_amt)
-        if successful and temp_success_roll < chance and temp_trophy_roll == trophy_roll_int:
-            next_rng()
-            ret.append(get_rng())
-        elif not successful and temp_success_roll >= chance and temp_trophy_roll == trophy_roll_int:
-            next_rng()
-            ret.append(get_rng())
-    return ret
 
 # Simple function to append to a string depending on some trophy flags
 def trophy_str(t: list[str, int, bool]) -> str:
@@ -282,10 +265,18 @@ def main():
     #   The actual trophy received
     # Both of these outcomes can help us to find whatever seed we're currently at.
     # The ideal outcome would be that the first roll is rejected, as that would significantly cut down on the portion of seeds to calculate.
-    # For now, I'll still implement a basic algorithm to just test every seed.
+    # The initial basic algorithm was to just test every seed, but his will be improved upon as described below
     # Before we do that though, we need to collect the user's input.
     possible_seeds = []
-    first_run = True
+    get_rand_int_100_range = [42991616, 85917696, 128909312, 171835392, 214761472, 257753088, 300679168, 343605248, 386596864, 429522944, 472449024, 515440640, 558366720, 
+                              601358336, 644284416, 687210496, 730202112, 773128192, 816054272, 859045888, 901971968, 944898048, 987889664, 1030815744, 1073741824, 1116733440, 
+                              1159659520, 1202651136, 1245577216, 1288503296, 1331494912, 1374420992, 1417347072, 1460338688, 1503264768, 1546190848, 1589182464, 1632108544, 
+                              1675100160, 1718026240, 1760952320, 1803943936, 1846870016, 1889796096, 1932787712, 1975713792, 2018639872, 2061631488, 2104557568, 2147483648, 
+                              2190475264, 2233401344, 2276392960, 2319319040, 2362245120, 2405236736, 2448162816, 2491088896, 2534080512, 2577006592, 2619932672, 2662924288, 
+                              2705850368, 2748841984, 2791768064, 2834694144, 2877685760, 2920611840, 2963537920, 3006529536, 3049455616, 3092381696, 3135373312, 3178299392, 
+                              3221225472, 3264217088, 3307143168, 3350134784, 3393060864, 3435986944, 3478978560, 3521904640, 3564830720, 3607822336, 3650748416, 3693674496, 
+                              3736666112, 3779592192, 3822583808, 3865509888, 3908435968, 3951427584, 3994353664, 4037279744, 4080271360, 4123197440, 4166123520, 4209115136, 
+                              4252041216, 4294967295]
     
     print("Input the results of using the lottery.")
     while len(possible_seeds) != 1:
@@ -345,14 +336,87 @@ def main():
         
         trophy_roll_cond_amt = NUM_AVAILABLE_TROPHIES - orig_owned_trophies if successful else orig_owned_trophies
         chance = int((trophy_roll_cond_amt / NUM_AVAILABLE_TROPHIES) * 100)
-
-        print('Beginning computations...')
-        # only iterate thru all 4 billion possible values on the first run
-        if first_run:
-            possible_seeds = rss(range(2**32), trophy_roll_cond_amt, successful, chance, trophy_roll_int)
-            first_run = False
+        
+        # As a preliminary filter for ruling out a large number of seeds, we can simply precalculate which seeds
+        # when advanced 4 times, would return an integer less than `chance` when `get_rand_int(100)` is called.
+        # We can then further filter this by checking the very next value and seeing if that returns the integer
+        # that corresponds with `trophy_roll_int`, which is given by running `get_rand_int(trophy_roll_cond_amt)`.
+        
+        # If this is the first run, then we need to filter out the possible RNG values from the impossible ones.
+        # Instead of computing the output of each possibility, we can instead used a pre-computed range that corresponds
+        # to the possible integers that are output by `get_rand_int(100)`. Then, we can simply iterate over all those values
+        # and see which ones would give the correct `trophy_roll_int`.
+        
+        # On the first run, we need to populate `possible_seeds` with only the seeds that could belong in it.
+        # Note that we use 3 lists here, the original `possible_seeds` list will be used throughout loops, the `temp_possible_seeds` 
+        # will be used after filtering for success/failure, and the `new_possible_seeds` will be used to store the new list of seeds 
+        # after each seed has also been filtered for the `trophy_roll_int` and also prepped for the next loop.
+        new_possible_seeds = []
+        temp_possible_seeds = []
+        if not len(possible_seeds):
+            if successful:
+                temp_possible_seeds = range(get_rand_int_100_range[chance])
+            else:
+                temp_possible_seeds = range(get_rand_int_100_range[chance], get_rand_int_100_range[-1])
         else:
-            possible_seeds = rss(possible_seeds, trophy_roll_cond_amt, successful, chance, trophy_roll_int)
+            # In this case, we need to iterate over each seed in the list of possible seeds, advance them 5 times, then determine if that seed
+            # would return a value that's less than `get_rand_int_100_range[chance]` if successful, and greater than or equal to 
+            # `get_rand_int_100_range[chance]` otherwise.
+            # Then, we can do the next filter by advancing the seed once more and checking if the `returned_trophy_int` is equal to the actual
+            # `trophy_roll_int` just like the logic above, and then advancing the logic one more time.
+            # Because we're advancing the seed 5 times and the function is an LCG, we can just compound the functions.
+            # For example, one advancement is just `(a * s + c) % m`, so two advancements would be `(a * (a * s + c) + c ) % m`, and so on.
+            # So for 5 advancements, the expression would be: `(a * (a * (a * (a * (a * s + c) + c) + c) + c) + c) % m`
+            # But, we can expand this to be: `(a^5 * s + a^4c + a^3c + a^2c + ac + c) % m`
+            # Using properties of modular arithmetic, we can break down the above expression into the following equivalent expression:
+            # `((a^5 * s) % m + (a^4c + a^3c + a^2c + ac + c) % m) % m`
+            # This is helpful because the second term of that expression can simply be a constant that we compute beforehand.
+            # Similarly, the first term can be simplified using modular arithmetic, as `(a^5 * s) % m` is equivalent to:
+            # `((a^5 % m) * (s % m)) % m`, and the first term is another constant. Therefore, we can use the following equivalent expression:
+            # `((((a^5 % m) * (s % m)) % m) + (a^4c + a^3c + a^2c + ac + c) % m)) % m`. This looks like a mess, but we can use precomputed
+            # constants replacing their respective terms to simply get the following equivalent expression:
+            # `(((X * (s % m)) % m) + Y) % m`, where `X = 448,952,893,172,627,528,680,641,293 % (2^32) = 675975949` and 
+            # `Y = 5,309,537,367,538,947,227,227,999,351 % (2^32) = 2727824503` lol this is insane
+            # And in keeping up with how horrible this code is, I'm going to check for a condition outside of the loop
+            # This way, I don't have to check it a few hundred million times inside the loop, as I can simply check it once outside the loop 👍
+            if successful:
+                for s in possible_seeds:
+                    temp_rng = (((675975949 * (s % m)) % m) + 2727824503) % m
+                    if temp_rng < get_rand_int_100_range[chance]:
+                        temp_possible_seeds.append(temp_rng)
+            else:
+                for s in possible_seeds:
+                    temp_rng = (((675975949 * (s % m)) % m) + 2727824503) % m
+                    if temp_rng >= get_rand_int_100_range[chance]:
+                        temp_possible_seeds.append(temp_rng)
+            # I'm aware that a faster and more elegant solution would be to throw in:
+            # `if (successful and temp_rng < get_rand_int_100_range[chance]) or (not successful and temp_rng >= get_rand_int_100_range[chance]):
+            #    temp_possible_seeds.append(temp_rng)`
+            # in just a single loop, under `temp_rng`, but I think that not having to access the variable `successful` a few hundred million times
+            # should save some time. It sucks that the code style has to suffer as a result, though.
+        # This is the end of the if / else statement above. We can now work on the `temp_possible_seeds` list, as both have
+        # seeds which are in line with the success/failure roll.
+        # Because these values skip calculating any RNG advancements from the beginning, we know that there are only 
+        # 2 more RNG advancements: the trophy roll, and the trophy pose.
+        # So, we can just filter on each of these seeds with the conditional: `get_rand_int(trophy_roll_cond_amt) == trophy_roll_int`.
+        # And lastly, we need to update each of the seeds in order to keep the seed usable for the next loop.
+        # Also confusingly, all the function calls will be re-written here to save on runtime and to decrease overhead at the cost of
+        # code legibility, because tbh who even reads this lol
+        for s in temp_possible_seeds:
+            # Advance the seed once
+            temp_rng = (a * s + c) % m
+            # Calculate the returned_trophy_int, which is `get_rand_int(trophy_roll_cond_amt)`
+            returned_trophy_int = (trophy_roll_cond_amt * (temp_rng >> 16)) >> 16
+            # Check the conditional as mentioned before
+            if returned_trophy_int == trophy_roll_int:
+                # Append the seed advanced a second time so that the value will be usable for the next while loop
+                new_possible_seeds.append((a * temp_rng + c) % m)
+        # Now we replace the old list with the new one.
+        possible_seeds = new_possible_seeds
+        
+        # The last thing to note is that the stuff above *is* the RSS algorithm and it is being done within this loop, as opposed to
+        # passing it to another function. Part of the reason why it looks so confusing is because it's extremely computation heavy, so I decided
+        # to try to optimize it pretty hard.
         
         print(f'num of possible seeds: {len(possible_seeds)}')
         
