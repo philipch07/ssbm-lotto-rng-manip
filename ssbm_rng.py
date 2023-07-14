@@ -8,7 +8,7 @@ from typing import Optional
 rng = 0x00000001
 a = 214013
 c = 2531011
-m = 2**32
+m = 4294967295
 
 def get_rng() -> int:
     global rng
@@ -21,16 +21,16 @@ def set_rng(val: int) -> None :
 # LCG:
 # a = 214013
 # c = 2531011
-# m = 2^32
+# m = 2^32 - 1 -> cuz im using & instead of %, which makes the program more optimized, (thanks to TauKhan for the tip!!)
 # Inputs:
 # `@custom` is an int passed in to compute the next rng value after the custom value, unsaved. Defaults to -1, which will use the actual rng value and save it.
 def next_rng(custom_rng_val: int = -1) -> int:
     if custom_rng_val == -1:
         global rng
-        rng = (a*rng + c) % m
+        rng = (a*rng + c) & m
         return rng
     else:
-        ret = (a*custom_rng_val + c) % m
+        ret = (a*custom_rng_val + c) & m
         return ret
 
 def get_rand_int(i: int, adv = True) -> int:
@@ -381,12 +381,12 @@ def main():
             # This way, I don't have to check it a few hundred million times inside the loop, as I can simply check it once outside the loop 👍
             if successful:
                 for s in possible_seeds:
-                    temp_rng = (((675975949 * (s % m)) % m) + 2727824503) % m
+                    temp_rng = (((675975949 * (s & 4294967295)) & 4294967295) + 2727824503) & 4294967295
                     if temp_rng < get_rand_int_100_range[chance]:
                         temp_possible_seeds.append(temp_rng)
             else:
                 for s in possible_seeds:
-                    temp_rng = (((675975949 * (s % m)) % m) + 2727824503) % m
+                    temp_rng = (((675975949 * (s & 4294967295)) & 4294967295) + 2727824503) & 4294967295
                     if temp_rng >= get_rand_int_100_range[chance]:
                         temp_possible_seeds.append(temp_rng)
             # I'm aware that a faster and more elegant solution would be to throw in:
@@ -404,13 +404,13 @@ def main():
         # code legibility, because tbh who even reads this lol
         for s in temp_possible_seeds:
             # Advance the seed once
-            temp_rng = (a * s + c) % m
+            temp_rng = (214013 * s + 2531011) & 4294967295
             # Calculate the returned_trophy_int, which is `get_rand_int(trophy_roll_cond_amt)`
             returned_trophy_int = (trophy_roll_cond_amt * (temp_rng >> 16)) >> 16
             # Check the conditional as mentioned before
             if returned_trophy_int == trophy_roll_int:
                 # Append the seed advanced a second time so that the value will be usable for the next while loop
-                new_possible_seeds.append((a * temp_rng + c) % m)
+                new_possible_seeds.append((214013 * temp_rng + 2531011) & 4294967295)
         # Now we replace the old list with the new one.
         possible_seeds = new_possible_seeds
         
