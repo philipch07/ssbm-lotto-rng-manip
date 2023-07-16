@@ -46,6 +46,19 @@
     #         print(f'tag={prev_tag}, up to {i - 1}')
     #         prev_tag = new_tag
 
+@ range of seeds which return the value of the current index
+    # curr_val = 0
+    # r = []
+    # i = 0
+    # beeg = 2**32
+    # while i < beeg:
+    #     set_rng(i)
+    #     temp = get_rand_int(100, False)
+    #     if temp != curr_val:
+    #         curr_val = temp
+    #         r.append(i)
+    # print(r)
+
 @ finding upper bound of repeated rolls (for tags)
     # prev = 0
     # count = 1
@@ -356,3 +369,32 @@
         print(f'All 1p/lotto trophies collected? {num_remaining_1p_lotto == 0}')
         print(f'Total number of resets: {resets}')
         print(f'Total coins spent {total_coins}')
+
+@ old naive RSS algorithm
+    # within the while loop, until the list has length strictly equal to 1
+
+    a while loop...
+        print('Beginning computations...')
+        # only iterate thru all 4 billion possible values on the first run
+        if first_run:
+            possible_seeds = rss(range(2**32), trophy_roll_cond_amt, successful, chance, trophy_roll_int)
+            first_run = False
+        else:
+            possible_seeds = rss(possible_seeds, trophy_roll_cond_amt, successful, chance, trophy_roll_int)
+
+@ old naive RSS function
+    def rss(init_possible_seeds: list[int], trophy_roll_cond_amt: int, successful: bool, chance: int, trophy_roll_int: int) -> list[int]:
+        ret = []
+        for i in init_possible_seeds:
+            set_rng(i)
+            get_rand_int(15)
+            use_coin()
+            temp_success_roll = get_rand_int(100)
+            temp_trophy_roll = get_rand_int(trophy_roll_cond_amt)
+            if successful and temp_success_roll < chance and temp_trophy_roll == trophy_roll_int:
+                next_rng()
+                ret.append(get_rng())
+            elif not successful and temp_success_roll >= chance and temp_trophy_roll == trophy_roll_int:
+                next_rng()
+                ret.append(get_rng())
+        return ret
