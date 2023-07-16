@@ -365,5 +365,11 @@ def main():
     lotto_sim(num_owned_trophies, num_remaining_1p_lotto, possible_seeds[0], trophies)
     print('\nProgram finished. At the moment, there is no course correction, so please try to input the correct trophies!')
 
+# def main():
+#     # gets the number of steps between seeds
+#     src = get_hex()
+#     tgt = get_hex()
+#     print(rng_diff(src, tgt))
+    
 if __name__ == "__main__":
     main()
