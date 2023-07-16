@@ -265,7 +265,7 @@ def main():
     #   The actual trophy received
     # Both of these outcomes can help us to find whatever seed we're currently at.
     # The ideal outcome would be that the first roll is rejected, as that would significantly cut down on the portion of seeds to calculate.
-    # The initial basic algorithm was to just test every seed, but his will be improved upon as described below
+    # The initial basic algorithm was to just test every seed, but this will be improved upon as described below
     # Before we do that though, we need to collect the user's input.
     possible_seeds = []
     get_rand_int_100_range = [42991616, 85917696, 128909312, 171835392, 214761472, 257753088, 300679168, 343605248, 386596864, 429522944, 472449024, 515440640, 558366720, 
