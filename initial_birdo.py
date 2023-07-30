@@ -58,7 +58,7 @@ def main():
                 'ball kirby', 'waddle dee', 'rick', 'jeff', 'starman2', 'bulbasaur', 'poliwhirl', 'eevee', 'totodile', 
                 'crobat', 'igglybuff', 'steelix', 'heracross', 'professor oak', 'misty', 'zero-one', 'maruo maruhige', 
                 'ryota hayami', 'ray mk ii', 'heririn', 'excitebike', 'ducks', 'bubbles', 'eggplant man', 
-                'balloon fighter', 'dr. wright', 'donbe & hikari', 'monster']
+                'balloon fighter', 'dr wright', 'donbe & hikari', 'monster']
     
     # the game starts off with 1 trophy already owned.
     
@@ -121,7 +121,6 @@ def main():
              'SLIM','SMOK','SNES','SNTA','SPUD','STAR','THOR','THUG','TIRE','TLOZ','TNDO','TOAD','TOMM','UNO','VIVI','WALK','WART','WARZ','WITH','YETI','YNOT','ZAXO',
              'ZETA','ZOD','ZOE','WORM','GEEK','DUDE','WYRN','BLOB']
     
-    # debugging shortcut
     rolled_tags = []
     while len(rolled_tags) != 5:
         new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
@@ -146,16 +145,13 @@ def main():
         num_advances = 0
         coins_to_spend = 0
         tags_to_roll = []
-        ideal_seed = seed
         temp_rng = get_rng()
         
         while not found_seed:
             for i in range(1, 6):
                 set_rng(temp_rng)
                 # 3 per coin
-                next_rng()
-                next_rng()
-                next_rng()
+                next_rng(), next_rng(), next_rng()
                 temp_rng = get_rng()
                 # int((83 / 84) * 100) = 98; this is the success roll
                 if get_rand_int(100) < 98:
@@ -177,11 +173,7 @@ def main():
                 for _ in range(num_advances):
                     next_rng()
                 temp_rng = get_rng()
-                ideal_seed = previous(get_rng())
-                # print(f'trying this seed: {ideal_seed}')
-        
-        # print(f'seed after RSS: {seed}')
-        # print(f'ideal_seed: {ideal_seed}')
+                # ideal_seed = previous(get_rng())
         
         # bring back the rng value back to the seed so we can figure out if we can get to the desired seed (via the `num_advances`)
         set_rng(seed)
