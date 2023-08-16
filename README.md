@@ -94,7 +94,7 @@ Nope! This gets a bit more complicated, but also significantly more interesting.
 |           Lotto only initial           |     `LOI`    |       12      |
 |        Lotto only after 1p clear       |    `LO1P`    |       23      |
 |   Lotto only after all chars unlocked  |     `LOC`    |       10      |
-|         Lotto only after 200 vs        |    `LOVS`    |       16      |
+|           1P/lotto after 200 vs        |   `1PLVS`    |       16      |
 | Lotto only after 250 trophies unlocked |     `LOT`    |       4       |
 |            Special Trophies            |     `ST`     |       48      |
 

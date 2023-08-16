@@ -88,6 +88,23 @@ def use_coin() -> int:
     next_rng()
     return next_rng()
 
+# this function helps to compute the coefficient and constant for a variable number of steps in the LCG without having to call `advance_seed()` a bunch
+# this way, i can just hard-code numbers instead of doing the super long modular arithmetic that i did in an earlier version
+# also this is all thanks to TauKhan again because i couldn't understand how the linear transformations worked hehe :))))
+# inputs:
+#   `s` = seed
+#   `i` = number of times that the seed should be advanced
+# returns: an integer
+# how to use: 
+#   coefficient = advance_star(1, i) - advance_star(0, i)
+#   constant = advance_star(0, i)
+def advance_star(s: int, i: int) -> int:
+    # numbers grabbed from the LCG function at the top of the file
+    for _ in range(i):
+        s = (214013 * s + 2531011) & 4294967295
+    
+    return s
+
 # Lottery simulator
 def lotto_sim(num_owned_trophies: int, num_remaining_1p_lotto: int, src: int, trophies: list[list[str, int, bool]]) -> None:
     NUM_AVAILABLE_TROPHIES = 84
@@ -191,10 +208,10 @@ def trophy_str(t: list[str, int, bool]) -> str:
         ret += f' (new)|'
     return ret
 
-def main():
+def pmain():
     # Initial trophy list: [trophy_name, not_owned=1/owned=0, 1p_lotto=True/lotto_only=False]
     trophies = [['ray gun', 1, True], ['super scope', 1, True], ['fire flower', 1, True], ['star rod', 1, True], ['home-run bat', 1, True], ['fan', 1, True], 
-                ['red shell', 1, False], ['flipper', 1, True], ['mr. saturn', 1, True], ['bob-omb', 1, True], ['super mushroom', 1, True], ['starman1', 1, True], 
+                ['red shell', 1, False], ['flipper', 1, True], ['mr. saturn', 1, True], ['bob-omb', 1, True], ['super mushroom', 1, True], ['starman mario', 1, True], 
                 ['barrel cannon', 1, True], ['party ball', 1, True], ['crate', 1, True], ['barrel', 1, True], ['capsule', 1, True], ['egg', 1, True], ['squirtle', 1, True], 
                 ['blastoise', 1, True], ['clefairy', 1, True], ['weezing', 1, True], ['chansey', 1, False], ['goldeen', 1, True], ['snorlax', 1, True], 
                 ['chikorita', 1, True], ['cyndaquil', 1, True], ['bellossom', 1, True], ['wobbuffet', 1, True], ['scizor', 1, True], ['porygon2', 1, True], 
@@ -202,11 +219,11 @@ def main():
                 ['birdo', 1, True], ['klap trap', 1, True], ['slippi toad', 1, True], ['koopa troopa', 1, True], ['topi', 1, True], ['metal mario', 1, True], 
                 ['daisy', 1, True], ['thwomp', 1, True], ['bucket', 1, True], ['racing kart', 1, True], ['baby bowser', 1, True], ['raphael raven', 1, True], 
                 ['dixie kong', 1, False], ['dr. stewart', 1, True], ['jody summer', 1, True], ['andross 64', 1, True], ['metroid', 1, True], ['ridley', 1, True], 
-                ['fighter kirby', 1, False], ['ball kirby', 1, True], ['waddle dee', 1, True], ['rick', 1, True], ['jeff', 1, False], ['starman2', 1, True], 
+                ['fighter kirby', 1, False], ['ball kirby', 1, True], ['waddle dee', 1, True], ['rick', 1, True], ['jeff', 1, False], ['starman earthbound', 1, True], 
                 ['bulbasaur', 1, True], ['poliwhirl', 1, True], ['eevee', 1, False], ['totodile', 1, True], ['crobat', 1, True], ['igglybuff', 1, True], 
                 ['steelix', 1, True], ['heracross', 1, True], ['professor oak', 1, False], ['misty', 1, False], ['zero-one', 1, True], ['maruo maruhige', 1, False], 
                 ['ryota hayami', 1, True], ['ray mk ii', 1, False], ['heririn', 1, True], ['excitebike', 1, True], ['ducks', 1, True], ['bubbles', 1, False], 
-                ['eggplant man', 1, False], ['balloon fighter', 1, True], ['dr. wright', 1, True], ['donbe & hikari', 1, True], ['monster', 1, True]]
+                ['eggplant man', 1, False], ['balloon fighter', 1, True], ['dr wright', 1, True], ['donbe & hikari', 1, True], ['monster', 1, True]]
     
     # the game starts off with 1 trophy already owned.
     num_owned_trophies = 0
@@ -365,28 +382,16 @@ def main():
             # Then, we can do the next filter by advancing the seed once more and checking if the `returned_trophy_int` is equal to the actual
             # `trophy_roll_int` just like the logic above, and then advancing the logic one more time.
             # Because we're advancing the seed 5 times and the function is an LCG, we can just compound the functions.
-            # For example, one advancement is just `(a * s + c) % m`, so two advancements would be `(a * (a * s + c) + c ) % m`, and so on.
-            # So for 5 advancements, the expression would be: `(a * (a * (a * (a * (a * s + c) + c) + c) + c) + c) % m`
-            # But, we can expand this to be: `(a^5 * s + a^4c + a^3c + a^2c + ac + c) % m`
-            # Using properties of modular arithmetic, we can break down the above expression into the following equivalent expression:
-            # `((a^5 * s) % m + (a^4c + a^3c + a^2c + ac + c) % m) % m`
-            # This is helpful because the second term of that expression can simply be a constant that we compute beforehand.
-            # Similarly, the first term can be simplified using modular arithmetic, as `(a^5 * s) % m` is equivalent to:
-            # `((a^5 % m) * (s % m)) % m`, and the first term is another constant. Therefore, we can use the following equivalent expression:
-            # `((((a^5 % m) * (s % m)) % m) + (a^4c + a^3c + a^2c + ac + c) % m)) % m`. This looks like a mess, but we can use precomputed
-            # constants replacing their respective terms to simply get the following equivalent expression:
-            # `(((X * (s % m)) % m) + Y) % m`, where `X = 448,952,893,172,627,528,680,641,293 % (2^32) = 675975949` and 
-            # `Y = 5,309,537,367,538,947,227,227,999,351 % (2^32) = 2727824503` lol this is insane
-            # And in keeping up with how horrible this code is, I'm going to check for a condition outside of the loop
-            # This way, I don't have to check it a few hundred million times inside the loop, as I can simply check it once outside the loop 👍
+            # Instead of doing the modular arithmetic that I did previously, we can use a simple linear compounding 
+            # function that TauKhan suggested, called `advance_star()`
             if successful:
                 for s in possible_seeds:
-                    temp_rng = (((675975949 * (s & 4294967295)) & 4294967295) + 2727824503) & 4294967295
+                    temp_rng = (675975949 * s + 2727824503) & 4294967295
                     if temp_rng < get_rand_int_100_range[chance]:
                         temp_possible_seeds.append(temp_rng)
             else:
                 for s in possible_seeds:
-                    temp_rng = (((675975949 * (s & 4294967295)) & 4294967295) + 2727824503) & 4294967295
+                    temp_rng = (675975949 * s + 2727824503) & 4294967295
                     if temp_rng >= get_rand_int_100_range[chance]:
                         temp_possible_seeds.append(temp_rng)
             # I'm aware that a faster and more elegant solution would be to throw in:
@@ -429,11 +434,18 @@ def main():
     lotto_sim(num_owned_trophies, num_remaining_1p_lotto, possible_seeds[0], trophies)
     print('\nProgram finished. At the moment, there is no course correction, so please try to input the correct trophies!')
 
+def main():
+    # gets the number of steps between seeds
+    while True:
+        src = get_hex()
+        tgt = get_hex()
+        print(rng_diff(src, tgt))
+
 # def main():
-#     # gets the number of steps between seeds
-#     src = get_hex()
-#     tgt = get_hex()
-#     print(rng_diff(src, tgt))
-    
+#     temp = advance_star(0, 26)
+#     print(f'coefficient for 26 = {advance_star(1, 26) - temp}')
+#     print(f'constant for 26 = {temp}')
+
+
 if __name__ == "__main__":
     main()

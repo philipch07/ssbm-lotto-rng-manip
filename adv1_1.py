@@ -1,8 +1,16 @@
-from tagrss import *
+from tagrss import TagRss
 
 # i really should figure out a better way to implement this 
 # instead of copy-pasting this for each new file
 rng = 0x00000001
+
+TAGS = ['AAAA','1DER','2BIT','2L8','2PAY','401K','4BDN','4BY4','4EVA','7HVN','AOK','ARCH','ARN','ASH','BAST','BBBB','BCUZ','BETA','BOBO','BOMB','BONE','BOO','BORT',
+            'BOZO','BUB','BUD','BUZZ','BYRN','CHUM','COOP','CUBE','CUD','DAYZ','DIRT','DIVA','DNCR','DUCK','DUD','DUFF','DV8','ED','ELBO','FAMI','FIDO','FILO','FIRE',
+            'FLAV','FLEA','FLYN','GBA','GCN','GLUV','GR8','GRIT','GRRL','GUST','GUT','HAMB','HAND','HELA','HEYU','HI5','HIKU','HOOD','HYDE','IGGY','IKE','IMPA','JAZZ',
+            'JEKL','JOJO','JUNK','KEY','KILA','KITY','KLOB','KNEE','L33T','L8ER','LCD','LOKI','LULU','MAC','MAMA','ME','MILO','MIST','MOJO','MOSH','NADA','ZZZZ','NAVI',
+            'NELL','NEWT','NOOK','NEWB','ODIN','OLAF','OOPS','OPUS','PAPA','PIT','POP','PKMN','QTPI','RAM','RNDM','ROBN','ROT8','RUTO','SAMI','SET','SETI','SHIG','SK8R',
+            'SLIM','SMOK','SNES','SNTA','SPUD','STAR','THOR','THUG','TIRE','TLOZ','TNDO','TOAD','TOMM','UNO','VIVI','WALK','WART','WARZ','WITH','YETI','YNOT','ZAXO',
+            'ZETA','ZOD','ZOE','WORM','GEEK','DUDE','WYRN','BLOB']
 
 def get_rng() -> int:
     global rng
@@ -15,10 +23,10 @@ def set_rng(val: int) -> None :
 def next_rng(custom_rng_val: int = -1) -> int:
     if custom_rng_val == -1:
         global rng
-        rng = (SEEDMULT*rng + SEEDCONST) & MAXINT
+        rng = (214013*rng + 2531011) & 4294967295
         return rng
     else:
-        ret = (SEEDMULT*custom_rng_val + SEEDCONST) & MAXINT
+        ret = (214013*custom_rng_val + 2531011) & 4294967295
         return ret
 
 def get_rand_int(i: int, adv = True) -> int:
@@ -71,8 +79,8 @@ def get_trophies_owned(prompt: str = "Type the names of the trophies that you've
                     if exact_match:
                         continue
                 print(f'{t[0]} collected!')
-                not_empty_confirmation = input(f"Press enter to confirm you received {t[0]}, otherwise enter a character.\n")
-                if not not_empty_confirmation:
+                confirmed = not input(f"Confirm {t[0]} trophy? Hit [ENTER] if yes, otherwise input a character.\n")
+                if confirmed:
                     num_remaining_1PO -= t[1]
                     del trophies[i]
                     found = True
@@ -89,6 +97,31 @@ def get_trophies_owned(prompt: str = "Type the names of the trophies that you've
         input_trophy = input("Trophy name (x or q to quit):\n")
     
     return trophies, num_remaining_1PO
+
+def input_tag(rolled_tags: list[str]) -> list[int]:
+    global TAGS
+    new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
+    if new_tag.upper() in TAGS:
+        rolled_tags.append(TAGS.index(new_tag.upper()))
+    else:
+        print('Invalid tag, probably a typo')
+    return rolled_tags
+
+def find_ideal_seed(trophies: list[str], temp_seed: int = -1, num_advances: int = 0) -> (int, int, int):
+    trophy_stage_roll = -1
+    # position_roll = -1
+    while True:
+        # Advance seed for success/failure roll, and check that it passes (the return value is `< 60`.)
+        # 22 advances plus 1 from `get_rand_int(100)`.
+        success_roll = (100 * ((-3310955595 * temp_seed + 3566711417) & 4294967295) >> 16) >> 16
+        if success_roll < 60: # sometimes this is 65, not sure what the cause for this is though.
+            # Advance seed for trophy roll, and check that it's a 1PO trophy (the second value of the returned index is `True`)
+            # 23 advances plus 1 from `get_rand_int(NUM_AVAILABLE_TROPHIES - num_owned_trophies) == get_rand_int(len(trophies))`
+            trophy_stage_roll = ((len(trophies)) * ((-3835258655 * temp_seed + 3845303128) & 4294967295) >> 16) >> 16
+            if trophies[trophy_stage_roll][1]:
+                return num_advances, trophy_stage_roll, temp_seed
+        temp_seed = (214013 * temp_seed + 2531011) & 4294967295
+        num_advances += 1
 
 # this time we're going to have to figure out the order of the trophies for the 1PO+1PL list
 def main():
@@ -115,14 +148,6 @@ def main():
     # Get the trophies owned from the gallery
     trophies, num_remaining_1PO = get_trophies_owned(trophies=trophies, num_remaining_1PO=num_remaining_1PO)
     
-    TAGS = ['AAAA','1DER','2BIT','2L8','2PAY','401K','4BDN','4BY4','4EVA','7HVN','AOK','ARCH','ARN','ASH','BAST','BBBB','BCUZ','BETA','BOBO','BOMB','BONE','BOO','BORT',
-             'BOZO','BUB','BUD','BUZZ','BYRN','CHUM','COOP','CUBE','CUD','DAYZ','DIRT','DIVA','DNCR','DUCK','DUD','DUFF','DV8','ED','ELBO','FAMI','FIDO','FILO','FIRE',
-             'FLAV','FLEA','FLYN','GBA','GCN','GLUV','GR8','GRIT','GRRL','GUST','GUT','HAMB','HAND','HELA','HEYU','HI5','HIKU','HOOD','HYDE','IGGY','IKE','IMPA','JAZZ',
-             'JEKL','JOJO','JUNK','KEY','KILA','KITY','KLOB','KNEE','L33T','L8ER','LCD','LOKI','LULU','MAC','MAMA','ME','MILO','MIST','MOJO','MOSH','NADA','ZZZZ','NAVI',
-             'NELL','NEWT','NOOK','NEWB','ODIN','OLAF','OOPS','OPUS','PAPA','PIT','POP','PKMN','QTPI','RAM','RNDM','ROBN','ROT8','RUTO','SAMI','SET','SETI','SHIG','SK8R',
-             'SLIM','SMOK','SNES','SNTA','SPUD','STAR','THOR','THUG','TIRE','TLOZ','TNDO','TOAD','TOMM','UNO','VIVI','WALK','WART','WARZ','WITH','YETI','YNOT','ZAXO',
-             'ZETA','ZOD','ZOE','WORM','GEEK','DUDE','WYRN','BLOB']
-    
     # stage_trophy_spawn_locations = ['first wall', 'low wall', 'on top of the bricks', 'pipe before cliff']
     while num_remaining_1PO > 0:
         print('Now go to the tag menu and roll 5 tags and enter each of them here.')
@@ -132,46 +157,31 @@ def main():
         rolled_tags = []
         # let the user input each of the rolled tags
         while len(rolled_tags) != 5:
-            new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
-            if new_tag.upper() in TAGS:
-                rolled_tags.append(TAGS.index(new_tag.upper()))
-            else:
-                print('invalid tag, either there was a typo or the script is broken D:')
+            rolled_tags = input_tag(rolled_tags=rolled_tags)
         potential_seed = TagRss(rolled_tags)
         
-        # if there's only one seed, then we can move on ahead
-        if len(potential_seed) == 1:
-            print('Found a possible seed, calculating ideal seed...')
-            seed = potential_seed[0][2]
-            temp_seed = seed
-            num_advances = 0
-            trophy_roll = -1
-            # position_roll = -1
-            while True:
-                # Advance seed for success/failure roll, and check that it passes (the return value is `< 60`.)
-                # 22 advances plus 1 from `get_rand_int(100)`.
-                success_roll = (100 * ((-3310955595 * temp_seed + 3566711417) & 4294967295) >> 16) >> 16
-                if success_roll < 60:
-                    # Advance seed for trophy roll, and check that it's a 1PO trophy (the second value of the returned index is `True`)
-                    # 23 advances plus 1 from `get_rand_int(NUM_AVAILABLE_TROPHIES - num_owned_trophies) == get_rand_int(len(trophies))`
-                    trophy_roll = ((len(trophies)) * ((-3835258655 * temp_seed + 3845303128) & 4294967295) >> 16) >> 16
-                    if trophies[trophy_roll][1]:
-                        # At this point, we've found a suitable seed, so we can exit this loop.
-                        break
-                        # The below code isn't included. The actual location of the trophy spawn isn't something that's easy to decide since the number of rng
-                        # advances between rolling for the trophy and the stage spawn is not consistent.
-                        # position_roll = (10 * ((-? * temp_seed + ?) & 4294967295) >> 16) >> 16
-                        # advance seed for placement roll and check that it's in a good spawn location (the return value is `<= 3`) could also accept `6`.
-                        # ??? advances plus 1 from `get_rand_int(10)`
-                        # if position_roll <= 3:
-                        #     # At this point, we've found a suitable seed, so we can exit this loop.
-                        #     break
-                temp_seed = (214013 * temp_seed + 2531011) & 4294967295
-                num_advances += 1
+        while len(potential_seed) > 1:
+            print(f"There are {len(potential_seed)} potential seeds, please keep rolling tags as prompted.")
+            rolled_tags = input_tag(rolled_tags=rolled_tags)
             
-            # here we determine the rng manip path via rolling tags
-                # in the future, possibly implement CSS manip path since it should probably take less time
-            tags_to_roll = []
+            bad_seeds = []
+            # since we're iterating through the list, i don't think we can remove the bad seed from the list, so we keep a list of the bad seeds and remove them later.
+            for i, seed in enumerate(potential_seed):
+                if seed[1][len(rolled_tags) - 1] != rolled_tags[-1]:
+                    # insert at the beginning of the list so we don't have to reverse the list when deleting (deleting from the end will prevent deleting wrong indexes.)
+                    bad_seeds.insert(0, i)
+            
+            for b in bad_seeds:
+                del potential_seed[b]
+        
+        seed = potential_seed[0][2][len(rolled_tags) - 5]
+        num_advances, trophy_roll, temp_seed = find_ideal_seed(trophies=trophies, temp_seed=seed)
+        
+        # here we determine the rng manip path via rolling tags
+            # in the future, possibly implement CSS manip path since it should probably take less time
+        tags_to_roll = []
+        while num_advances != 0:
+            temp_num_advances = num_advances
             set_rng(seed)
             while num_advances > 0:
                 tag_roll = get_rand_int(145)
@@ -180,35 +190,34 @@ def main():
                     tag_roll = get_rand_int(145)
                     num_advances -= 1
                 tags_to_roll.append(TAGS[tag_roll])
-                rolled_tags.pop(0)
+                del rolled_tags[0]
                 rolled_tags.append(tag_roll)
             
-            if num_advances == 0:
-                if len(tags_to_roll) == 0:
-                    print("No rolls are necessary")
-                else:
-                    # print the last 5 tags to roll, cuz too many tags will clutter the prompt
-                    print(f'You need to roll {len(tags_to_roll)} tags')
-                    num_tags_to_print = min(5, len(tags_to_roll))
-                    for tags in tags_to_roll[-1*num_tags_to_print:]:
-                        print(tags)
-                    print("\n\nSTOP ROLLING NOW")
-                print(f'Trophy from 1-1: {trophies[trophy_roll][0]}')
-                # print(f'Spawn position: {stage_trophy_spawn_locations[position_roll]}')
-                # confirm stage trophy was collected
-                not_empty_confirmation = input(f"Did you pick up the {trophies[trophy_roll][0]} trophy? Hit enter if yes, otherwise input a character.\n")
-                if not not_empty_confirmation:
-                    print(f"Confirmed that you received {trophies[trophy_roll][0]}.")
-                    num_remaining_1PO -= trophies[trophy_roll][1]
-                    del trophies[trophy_roll]
-                # check if goomba trophy was collected
-                trophies, num_remaining_1PO = get_trophies_owned(prompt="If you collected a goomba trophy, enter the name, otherwise just hit enter\n",
-                                                                trophies=trophies, num_remaining_1PO=num_remaining_1PO, goomba=True)
-                print(f"NUMBER OF REMAINING 1PO TROPHIES: {num_remaining_1PO}")
-            else:
-                print('Unfortunately, using tags to manipulate the RNG doesn\'t work. Advance the rng by going to the title screen and roll some tags again.')
+            if num_advances != 0:
+                num_advances, trophy_roll, temp_seed = find_ideal_seed(trophies=trophies, temp_seed=temp_seed, num_advances=temp_num_advances)
+        
+        if len(tags_to_roll) == 0:
+            print("No rolls are necessary")
         else:
-            print('tagRSS couldn\'t find the seed. Go to the CSS screen and random a few characters and try again.')
+            # print the last 5 tags to roll, cuz too many tags will clutter the prompt
+            print(f'You need to roll {len(tags_to_roll)} tags')
+            num_tags_to_print = min(5, len(tags_to_roll))
+            for tags in tags_to_roll[-1*num_tags_to_print:]:
+                print(tags)
+            print("\n\nSTOP ROLLING NOW")
+        print(f'Trophy from 1-1: {trophies[trophy_roll][0]}')
+        # print(f'Spawn position: {stage_trophy_spawn_locations[position_roll]}')
+        # confirm stage trophy was collected
+        not_empty_confirmation = input(f"Did you pick up the {trophies[trophy_roll][0]} trophy? Hit enter if yes, otherwise input a character.\n")
+        if not not_empty_confirmation:
+            print(f"Confirmed that you received {trophies[trophy_roll][0]}.")
+            num_remaining_1PO -= trophies[trophy_roll][1]
+            del trophies[trophy_roll]
+        # check if goomba trophy was collected
+        trophies, num_remaining_1PO = get_trophies_owned(prompt="If you collected a goomba trophy, enter the name, otherwise just hit enter\n",
+                                                        trophies=trophies, num_remaining_1PO=num_remaining_1PO, goomba=True)
+        
+        print(f"NUMBER OF REMAINING 1PO TROPHIES: {num_remaining_1PO}")
     print("Done")
 
 

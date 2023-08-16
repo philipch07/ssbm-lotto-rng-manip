@@ -349,7 +349,8 @@ def TagRss(sequence):
 
     :param sequence: List of 5 ints corresponding to sequence of ingame tags. The list length has to be exactly 5.
     :return: List of match lists. Each match list has 3 items; starting seed, list of tag ints generated from the
-    starting seed, and ending seed, the seed that the sequence ends on post tag generation.
+    starting seed, and list of ending seeds generated, the seeds that the sequences ends on post tag generation.
+    The ending seed list starts from seed after 5 tag generated, and goes up to seed after 10th tag.
     """
     hits = []
 
@@ -401,9 +402,16 @@ def validate_hits(sequence, hits):
 
     for seed in hits:
 
-        tag_list, post_seed = generate_tags(seed)
+        tag_list, post_seed = generate_tags(seed, 10)
         if list_eq(sequence, tag_list):
-            valids.append([seed, tag_list, post_seed])
+
+            duplicate_ending_found = False
+
+            for i in range(0, len(valids)):
+                duplicate_ending_found = duplicate_ending_found or list_eq(valids[i][2], post_seed)
+
+            if not duplicate_ending_found:
+                valids.append([seed, tag_list, post_seed])
 
     return valids
 
@@ -417,6 +425,7 @@ def generate_tags(seed, length=5):
     :return: tags: int list, s: ending seed after list generation.
     """
     s = next(seed)
+    end_list = []
     tags = [rand_int(s)]
 
     for num in range(1, length):
@@ -429,9 +438,11 @@ def generate_tags(seed, length=5):
             tag = rand_int(s)
             if tag not in tags[low_end: num]:
                 tags.append(tag)
+
                 not_appended = False
 
-    return tags, s
+        if num >= 4:
+            end_list.append(s)
 
 
-# type in the 5 tags that you got!
+    return tags, end_list
