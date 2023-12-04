@@ -42,6 +42,7 @@ def trophy_str(t: list[str, int, bool]) -> str:
         ret += f' (new)|'
     return ret
 
+# can probably make this more efficient by not calling it twice (or by storing the first search's results)
 def check_buckets(trophy: str, buckets: list[list[str]], delete: bool = True) -> (list[list[str]], list[str]):
     rem = []
     for i, b in enumerate(buckets):
@@ -52,7 +53,9 @@ def check_buckets(trophy: str, buckets: list[list[str]], delete: bool = True) ->
                     if not len(b):
                         del buckets[i]
                 else:
-                    rem = buckets[i]
+                    temp_rem = buckets[i].copy()
+                    del temp_rem[j]
+                    rem = temp_rem
                 return buckets, rem
 
 def input_trophies_owned(prompt: str = "Type the names of the trophies that you've collected in the gallery. Substrings are allowed, but be careful. Type 'x' or 'q' to finish.\n", 
@@ -124,15 +127,19 @@ def find_ideal_seed(trophies: list[str], temp_seed: int = -1, num_advances: int 
     trophy_stage_roll = -1
     # position_roll = -1
     while True:
-        # Advance seed for success/failure roll, and check that it passes (the return value is `< 60`.)
-        # 24 advances plus 1 from `get_rand_int(100)`.
-        success_roll = (100 * ((-1190463139 * temp_seed + 3357146299) & 4294967295) >> 16) >> 16
-        if success_roll < 65: # sometimes this is 65, not sure what the cause for this is though.
-            # Advance seed for trophy roll, and check that it's a 1PO trophy (the second value of the returned index is `True`)
-            # 25 advances plus 1 from `get_rand_int(NUM_AVAILABLE_TROPHIES - num_owned_trophies) == get_rand_int(len(trophies))`
-            trophy_stage_roll = ((len(trophies)) * ((-1422735383 * temp_seed + 2234209426) & 4294967295) >> 16) >> 16
-            return num_advances, trophy_stage_roll, temp_seed
-            # We don't have to check for anything else here since we're assuming all other trophies except for the 1PO trophies are owned.
+        # roll to make sure we get a trophy from the 1PO category and NOT the 1PL+1PLVS categories (22 advances + 1)
+        # cat_roll is either a 1 or a 0 so we can let python handle the implicit int -> bool conversion
+        cat_roll = (2 * ((-3310955595 * temp_seed + 3566711417) & 4294967295) >> 16) >> 16
+        if cat_roll:
+            # Advance seed for success/failure roll, and check that it passes (the return value is `< 60`.)
+            # 24 advances plus 1 from `get_rand_int(100)`.
+            success_roll = (100 * ((-1190463139 * temp_seed + 3357146299) & 4294967295) >> 16) >> 16
+            if success_roll < 60: # sometimes this is 65, not sure what the cause for this is though.
+                # Advance seed for trophy roll, and check that it's a 1PO trophy (the second value of the returned index is `True`)
+                # 25 advances plus 1 from `get_rand_int(NUM_AVAILABLE_TROPHIES - num_owned_trophies) == get_rand_int(len(trophies))`
+                trophy_stage_roll = ((len(trophies)) * ((-1422735383 * temp_seed + 2234209426) & 4294967295) >> 16) >> 16 # sometimes this is done out of 88?
+                return num_advances, trophy_stage_roll, temp_seed
+                # We don't have to check for anything else here since we're assuming all other trophies except for the 1PO trophies are owned.
         temp_seed = (214013 * temp_seed + 2531011) & 4294967295
         num_advances += 1
 
@@ -143,8 +150,8 @@ def main():
     trophies = ['warp star', 'beam sword', 'green shell', 'freezie', 'parasol', 'screw attack', 'charizard', 'electrode', 'staryu', 'marill', 
                 'vegetable', 'banzai bill', 'four giants', 'master sword', 'koopa paratroopa', 'redead', 'octorok', 'like like', 'plum', 
                 'viruses', 'goron', 'fire kirby', 'paula', 'cleffa', 'love giant', 'pit', 'ayumi tachibana']
-    buckets = [['beam sword', 'paula'], ['freezie', 'parasol', 'screw attack'], ['ayumi', 'love giant'], ['staryu', 'charizard'], 
-               ['like like', 'redead'], ['four giants'], ['plum'], ['cleffa', 'electrode', 'marill'], ['fire kirby'], ['banzai bill', 'paratroopa'], 
+    buckets = [['beam sword', 'paula'], ['freezie', 'parasol', 'screw attack'], ['ayumi tachibana', 'love giant'], ['staryu', 'charizard'], 
+               ['like like', 'redead'], ['four giants'], ['plum'], ['cleffa', 'electrode', 'marill'], ['fire kirby'], ['banzai bill', 'koopa paratroopa'], 
                ['green shell'], ['pit'], ['vegetable', 'warp star'], ['viruses'], ['octorok'], ['goron', 'master sword']]
     # Get the trophies owned from the gallery
     trophies, buckets = input_trophies_owned(trophies=trophies, buckets=buckets)
@@ -213,26 +220,26 @@ def main():
         print(f'Trophy from 1-1: {trophy_name.upper()}')
         # need to check if goomba trophy is desirable or dupe
         _, rem = check_buckets(trophy=trophy_name, buckets=buckets, delete=False)
-        goomba_trophies = {}
-        if len(rem) > 1:
+        if len(rem) > 0:
             print(f"Goomba trophies:")
             i = 1
             for t in rem:
-                if t != trophy_name:
-                    goomba_trophies[i] = t
-                    print(f'\t{i}: {t.upper()}')
+                print(f'\t{i}: {t.upper()}')
+                i += 1
         # confirm stage trophy was collected
         trophies, buckets, _ = confirm_trophy(roll=trophy_stage_roll, trophies=trophies, buckets=buckets)
         # there can only be up to 2 goomba trophies for any given trophy, according to buckets
         # if there's only 1 goomba trophy, then just confirm if the player picked it up.
-        if len(goomba_trophies) == 1:
-            trophies, buckets, _ = confirm_trophy(roll=trophies.index(goomba_trophies[1]), trophies=trophies, buckets=buckets)
-        else:
-            goomba_trophy = input(f"Which goomba trophy did you collect? Press [ENTER] if neither.\n\t[1] {goomba_trophies[1].upper()}\n\t[2] {goomba_trophies[2].upper()}")
-            if int(goomba_trophy) == 1 or int(goomba_trophy) == 2:
-                trophies, buckets, _ = confirm_trophy(roll=trophies.index(goomba_trophies[int(goomba_trophy)]), trophies=trophies, buckets=buckets)
-        
+        match len(rem):
+            case 1:
+                trophies, buckets, _ = confirm_trophy(roll=trophies.index(rem[0]), trophies=trophies, buckets=buckets)
+            case 2:
+                goomba_trophy = input(f"Which goomba trophy did you collect? Press [ENTER] if neither.\n\t[1] {rem[0].upper()}\n\t[2] {rem[1].upper()}\n\t")
+                if goomba_trophy != '':
+                    if int(goomba_trophy) == 1 or int(goomba_trophy) == 2:
+                        trophies, buckets, _ = confirm_trophy(roll=trophies.index(rem[int(goomba_trophy) - 1]), trophies=trophies, buckets=buckets)
         print(f"NUMBER OF REMAINING 1PO TROPHIES: {len(trophies)}")
+        
     print("Done")
 
 
