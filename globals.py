@@ -135,7 +135,6 @@ def get_seed() -> (int, [int]):
         else:
             print('Invalid tag, probably a typo')
     
-    # i should test the weird case of [l8er, bone, opus, dayz, coop]
     return potential_seed[0][2][len(rolled_tags) - 5], rolled_tags
 
 def trophy_str(t: list[str, int, bool]) -> str:
