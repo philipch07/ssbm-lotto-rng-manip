@@ -1,51 +1,46 @@
 # ssbm-lotto-rng-manip
 
-This is a project aimed at understanding SSBM's lottery minigame, as well as the underlying rng functions that SSBM uses.
+This project was initially aimed at understanding SSBM's lottery minigame but it had some expansions as I made some new discoveries about how RNG works for generating new name tags as well as generating trophies in the first stage of the single player adventure mode.
 
-Watch the below video for a live example of the `initial_lotto.py` on a fresh boot of Melee.
-
-https://youtu.be/nilRjbvIG4Y
 
 # Check Out Other SSBM Tools!
 
 https://github.com/Olivia926/All_Trophies_Help
 
-That's the collection of tools which are relevant to SSBM's All Trophies any% speedrun.
-
-I'll keep this repo updated since I prefer working with smaller repos, which I'll then merge any updates into that repo.
+That's the collection of tools which are relevant to SSBM's All Trophies any% speedrun, but this repo is the main repo that I'll be contributing to for ease of use.
 
 # Getting Started
 
-Note: At this point, most scripts have been optimized to avoid having to iterate over every single one of the 4.3+ billion seeds. As a result, using pypy isn't as important as previously recommended, but because my lottoRSS algorithm is still very primitive (as of early Sept 2023), I would recommend using pypy for that. For the remaining programs, it would be to use the normal Python interpreter, but pypy might be slightly faster. I started this project in Python because I thought this project would be relatively quick and small, which of course was an extreme understatement.
+Most scripts have been optimized to avoid having to iterate over every single one of the 4.3+ billion seeds. I started this project in Python because I thought this project would be relatively quick and small, which of course was an extreme understatement. That being said, Python's slower speeds compared to languages such as C or Rust aren't an issue because of the optimizations made in the Reverse Seed Search (RSS) algorithm thanks to TauKhan.
 
-If you just want to try out one of these scripts, make sure you have Python installed and in your PATH. Then in a terminal, navigate to the folder containing this repo, or whichever scripts you want to use (for this example, let's say I want to run `initial_birdo.py`). Then once you're in the correct directory in the terminal, type `python ./initial_birdo.py`, and it'll run the script (if not, check your directory and also if you need to type `python3` instead of `python`). From there, your terminal should look like mine in the video. If you want to exit python in the terminal, you can either close the terminal window or type `quit()` and hit enter.
-
-Note that pypy is no longer necessary! Thanks to TauKhan's tagRSS implementation, we will never loop over 4.3b+ values ever again.
+If you just want to try out one of these scripts, make sure you have Python installed and in your PATH. Then in a terminal, navigate to the folder containing this repo, or whichever scripts you want to use (for this example, let's say I want to run `initial_birdo.py`). Then in the terminal, navigate to the directory containing the script, type `python ./initial_birdo.py`, and it'll run the script (if not, check your directory and also if you need to type `python3` instead of `python`). From there, your terminal should look like mine in the video. If you want to exit python in the terminal, you can either close the terminal window or type `quit()` and hit enter.
 
 ## Melee Speedruns and these scripts:
-For any non-stadium speedruns which may require birdo in any way, `initial_birdo.py` should be used. For all trophies, `initial_birdo.py` is used at the beginning, followed up by `end_lotto.py` (to be written), and finally `end_adv1_1.py`.
+For any non-stadium speedruns which may require birdo in any way, `initial_birdo.py` should be used. For the all trophies speedrun, `initial_birdo.py` is used at the beginning, followed up by `end_lotto.py`, and finally `end_adv1_1.py` to end the run. Note that the lottery must be completed before the end of the adventure run! This is because that's the order that I tested the scripts in, and any inconsistencies might result in the scripts being completely unusable.
 
 ## Explanation of notable files:
+`initial_birdo.py` is intended to be used at the very beginning of a game launch in order to get birdo from the starting 5 coins from the lottery minigame. Note that this file is heavily commented, so if you're looking to learn what the code is like, start reading here!
+
 `end_adv1_1.py` is intended to be used at the end of an all trophies run.
 
-`initial_birdo.py` is intended to be used at the very beginning of a game launch in order to get birdo from the starting 5 coins from the lottery minigame. Note that this file is heavily commented, so if you're looking to learn what the code is like, start reading here!
+`end_lotto.py` is intended to be used at the end of an all trophies run.
 
 `tagrss.py`is TauKhan's extremely efficient implementation of tagRSS (explanation below). This isn't meant to be run by itself, but can be used if the user knows what they're doing.
 
-`globals.py` handles all of the additional utility calls, and contains specific lists of trophies. This file helps to reduce duplicate code across multiple files by keeping it in one central location. At the moment, it handles managing a user's owned trophies, determining the seed by calling `tagrss.py` alongside some other logic, and printing the tags that a user should roll for the actual rng manipulation.
+`globals.py` handles all of the additional utility calls, and contains specific lists of trophies. This file helps to reduce duplicate code across multiple files by keeping it in one central location. At the moment, it handles managing a user's owned trophies, determining the seed by calling `tagrss.py` alongside some other logic, and printing the tags that a user should roll for any necessary rng manipulation.
 
 `trophies.txt` is a list of all the trophies in the game that are needed, with certain names being adjusted due to duplicate or confusing names.
 
 ## Explanation of other files
-`initial_lotto.py`, `old_adv1_1.py`, `old_code.py.example`, and `start_adv1_1.py` all should not be used for any speedrun purposes, as these files are out of date. I kept them here because it could potentially contain some helpful information (for example, the initial lotto script will have some logic that I can reuse for writing `end_lotto.py`), and they have some examples of my initial approaches to problems. `start_adv1_1.py` was a test for using `globals.py` to handle cleaning up some of the duplicate logic that I kept implementing every time I wanted to solve a new rng manip problem with tagRSS as my starting point. It is also extremely similar to `end_adv1_1.py` and should also work properly from what I've tested.
+`initial_lotto.py`, `old_adv1_1.py`, `old_code.py.example`, and `start_adv1_1.py` all should NOT be used for any speedrun purposes, as these files are out of date. I kept them here because it could potentially contain some helpful information (for example, the initial lotto script has some similar logic used `end_lotto.py`, albeit far more primitive), and they have some examples of my initial approaches to problems, which may be helpful for other speedrunning communities. `start_adv1_1.py` was a test for using `globals.py` to handle cleaning up some of the duplicate logic that I kept implementing every time I wanted to solve a new rng manip problem with tagRSS as my starting point. It is also extremely similar to `end_adv1_1.py` and should also work properly from what I've tested.
 
 ---
 
 ## TODO (ordered by importance):
 
-- Create a script for when a runner is looking to unlock all trophies at the end of the run (`end_lotto.py`)
-- Implement course correction (e.g. calculate the current seed after misinputting the number of coins and rerun the algorithm)
-- Implement multiprocessing/multithreading for LottoRss if necessary or if it's faster
+- ~~Create a script for when a runner is looking to unlock all trophies at the end of the run (`end_lotto.py`)~~
+- Rewrite this file so it's more readable and has a better narrative.
+- Implement course correction (create a way for scripts to undo mistakes or recompute the current seed if the user misinputs) [this is not likely to be implemented since it is very time consuming... in other words, be careful when inputting!]
 - ~~Fix `end_adv1_1.py` bugs~~
 - ~~Create an easier way to reduce repeated logic for new scripts~~
 - ~~Fix readme issues (incorrect information due to misremembering)~~

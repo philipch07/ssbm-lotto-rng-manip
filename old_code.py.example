@@ -398,3 +398,9 @@
                 next_rng()
                 ret.append(get_rng())
         return ret
+
+buckets = [['beam sword', 'paula'], ['freezie', 'parasol', 'screw attack'], ['ayumi tachibana', 'love giant'], ['staryu', 'charizard'], 
+    ['like like', 'redead'], ['four giants'], ['plum'], ['cleffa', 'electrode', 'marill'], ['fire kirby'], ['banzai bill', 'koopa paratroopa'], 
+    ['green shell'], ['pit'], ['vegetable', 'warp star'], ['viruses'], ['octorok'], ['goron', 'master sword']]
+
+stage_trophy_spawn_locations = ['first wall', 'low wall', 'on top of the bricks', 'pipe before cliff']
