@@ -111,30 +111,33 @@ def get_trophies(base_trophy_set, input_trophy = None):
 
 def get_seed() -> (int, [int]):
     """ Returns the seed and the list of rolled tags as a tuple."""
-    print('Go to the tag menu and roll 5 tags (type them in and hit enter between each).')
-    rolled_tags = []
-    rt_append = rolled_tags.append
-    while len(rolled_tags) != 5:
-        new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
-        ind = TAGS_DICT.get(new_tag.upper(), -1)
-        if ind != -1:
-            rt_append(ind)
-        else:
-            print('Invalid tag, please check for any typos.')
-    
-    potential_seed = TagRss(rolled_tags)
-    while len(potential_seed) > 1:
-        print(f"There are {len(potential_seed)} potential seeds, please keep rolling tags as prompted.")
-        new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
-        ind = TAGS_DICT.get(new_tag.upper(), -1)
-        if ind != -1:
-            rt_append(ind)
-            bad_seeds = [i for i, seed in enumerate(potential_seed) if seed[1][len(rolled_tags) - 1] != rolled_tags[-1]]
-            for b in reversed(bad_seeds):
-                del potential_seed[b]
-        else:
-            print('Invalid tag, probably a typo')
-    
+    potential_seed = []
+    while not len(potential_seed):
+        print('Go to the tag menu and roll 5 tags (type them in and hit enter between each).')
+        rolled_tags = []
+        rt_append = rolled_tags.append
+        while len(rolled_tags) != 5:
+            new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
+            ind = TAGS_DICT.get(new_tag.upper(), -1)
+            if ind != -1:
+                rt_append(ind)
+            else:
+                print('Invalid tag, please check for any typos.')
+        
+        potential_seed = TagRss(rolled_tags)
+        while len(potential_seed) > 1:
+            print(f"There are {len(potential_seed)} potential seeds, please keep rolling tags as prompted.")
+            new_tag = input(f"tag #{len(rolled_tags) + 1}: ")
+            ind = TAGS_DICT.get(new_tag.upper(), -1)
+            if ind != -1:
+                rt_append(ind)
+                bad_seeds = [i for i, seed in enumerate(potential_seed) if seed[1][len(rolled_tags) - 1] != rolled_tags[-1]]
+                for b in reversed(bad_seeds):
+                    del potential_seed[b]
+            else:
+                print('Invalid tag, probably a typo')
+        if not len(potential_seed):
+            print("No seeds found, try again.")
     return potential_seed[0][2][len(rolled_tags) - 5], rolled_tags
 
 def trophy_str(t: list[str, int, bool]) -> str:
