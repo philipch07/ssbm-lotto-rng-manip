@@ -60,6 +60,42 @@ TROPHIES_1PL_1PO_TAGGED = [['warp star', True], ['ray gun', False], ['super scop
                             ['ryota hayami', False], ['love giant', True], ['heririn', False], ['excitebike', False], ['ducks', False], ['balloon fighter', False], 
                             ['pit', True], ['dr wright', False], ['donbe & hikari', False], ['ayumi tachibana', True], ['monster', False]]
 
+TROPHIES_1PL_LOT = [['ray gun', True], ['super scope', True], ['fire flower', True], ['star rod', True], ['home-run bat', True], ['fan', True], 
+                ['red shell', False], ['flipper', True], ['mr. saturn', True], ['bob-omb', True], ['super mushroom', True], ['starman mario', True], 
+                ['barrel cannon', True], ['party ball', True], ['crate', True], ['barrel', True], ['capsule', True], ['egg', True], ['squirtle', True], 
+                ['blastoise', True], ['clefairy', True], ['weezing', True], ['chansey', False], ['goldeen', True], ['snorlax', True], 
+                ['chikorita', True], ['cyndaquil', True], ['bellossom', True], ['wobbuffet', True], ['scizor', True], ['porygon2', True], 
+                ['toad', True], ['coin', True], ['kirby hat 1', True], ['kirby hat 2', True], ['kirby hat 3', True], ['lakitu', True], 
+                ['birdo', True], ['klap trap', True], ['slippi toad', True], ['koopa troopa', True], ['topi', True], ['metal mario', True], 
+                ['daisy', True], ['thwomp', True], ['bucket', True], ['racing kart', True], ['baby bowser', True], ['raphael raven', True], 
+                ['dixie kong', False], ['dr. stewart', True], ['jody summer', True], ['andross 64', True], ['metroid', True], ['ridley', True], 
+                ['fighter kirby', False], ['ball kirby', True], ['waddle dee', True], ['rick', True], ['jeff', False], ['starman earthbound', True], 
+                ['bulbasaur', True], ['poliwhirl', True], ['eevee', False], ['totodile', True], ['crobat', True], ['igglybuff', True], 
+                ['steelix', True], ['heracross', True], ['professor oak', False], ['misty', False], ['zero-one', True], ['maruo maruhige', False], 
+                ['ryota hayami', True], ['ray mk ii', False], ['heririn', True], ['excitebike', True], ['ducks', True], ['bubbles', False], 
+                ['eggplant man', False], ['balloon fighter', True], ['dr wright', True], ['donbe & hikari', True], ['monster', True]]
+
+DSTAR = {1: [675975949, 2727824503],
+        2: [-191841887, 2115878600],
+        3: [-2157176827, 2531105853],
+        4: [1084380025, 2165923046],
+        5: [-389939651, 586225427],
+        6: [-605770863, 3109564500],
+        7: [-3310955595, 3566711417],
+        8: [-1422735383, 2234209426],
+        9: [-1492584851, 2784856047],
+        10: [-762265983, 2186156320],
+        11: [-3133008795, 3255514357],
+        12: [896611673, 2974409086],
+        13: [-2201834595, 4082973451],
+        14: [2963202673, 1172243756],
+        15: [191990293, 2947833777],
+        16: [-668333111, 3265965994],
+        17: [-811643443, 2952203367],
+        18: [2226784097, 763478136],
+        19: [3798852805, 152809133],
+        20: [-727532743, 3073944342]}
+
 def get_trophies(base_trophy_set, input_trophy = None):
     trophies = base_trophy_set
     skip = input_trophy is not None
@@ -109,7 +145,7 @@ def get_trophies(base_trophy_set, input_trophy = None):
             input_trophy = input("Trophy name (x or q to quit):\n")
     return trophies
 
-def get_seed() -> (int, [int]):
+def get_seed() -> tuple[int, list[int]]:
     """ Returns the seed and the list of rolled tags as a tuple."""
     potential_seed = []
     while not len(potential_seed):
