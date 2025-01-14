@@ -1,11 +1,11 @@
 import copy
 import random
-from globals import TAGS, TROPHIES_1PL_LOT, DSTAR
+from globals import TAGS, TROPHIES_1PL_LOI, DSTAR
 from globals import get_trophies, get_seed, print_tags
 
 # this is meant to get 83/84 of the initial trophies because of reasons that were not explained to me.
-# the way this is accomplished is by keeping track of the LOT trophies that are collected, and ensuring that we only ever get 11/12 of them.
-# thus the last uncollected trophy is from LOT.
+# the way this is accomplished is by keeping track of the LOI trophies that are collected, and ensuring that we only ever get 11/12 of them.
+# thus the last uncollected trophy is from LOI.
 
 # this also features a new algorithm where fewer coins are spent due to this being run at the beginning of a run.
 # note that the greedy algorithm is also toggleable here.
@@ -105,9 +105,9 @@ def coin_step(trophies, clot: int, coins_spent: list[int], seed: int, coins_to_s
     if (100 * temp_seed >> 16) >> 16 < chance + (5 * (coins_to_spend - 1)):
         # 1 step for trophy roll
         trophy_idx = (len(trophies) * ((214013 * temp_seed + 2531011) & 4294967295) >> 16) >> 16
-        # if the trophy is LOT, add it to the count. if this is the LAST LOT trophy, do not accept it.
+        # if the trophy is LOI, add it to the count. if this is the LAST LOI trophy, do not accept it.
         # if clot != 11 -> accept the trophy and add clot count if necessary
-        # else -> if not LOT, then accept the trophy
+        # else -> if not LOI, then accept the trophy
         #      -> else do not accept the trophy -> FLAG BRANCH AS INVALID ??
         if clot != 11:
             clot += not trophies[trophy_idx]
@@ -156,7 +156,7 @@ def coin_sim(trophies, seed, debug, max_depth, max_breadth, count_lot):
                 if (100 * temp_seed >> 16) >> 16 < chance + (5 * i):
                     # 1 step for trophy roll
                     trophy_idx = (len(trophies) * ((214013 * temp_seed + 2531011) & 4294967295) >> 16) >> 16
-                    # if the trophy is LOT, add it to the count. if this is the LAST LOT trophy, do not accept it.
+                    # if the trophy is LOI, add it to the count. if this is the LAST LOI trophy, do not accept it.
                     if count_lot != 11:
                         count_lot += not trophies[trophy_idx][1]
                     else:
@@ -222,7 +222,7 @@ def coin_sim(trophies, seed, debug, max_depth, max_breadth, count_lot):
                         for i in range(max_breadth, 0, -1):
                             stack.append((copy.deepcopy(c[0]), copy.deepcopy(c[1]), copy.deepcopy(c[2]), copy.deepcopy(c[3]), i))
                 else:
-                    # branch is dead due to invalid (this means it ends up completing the LOT set, which it shouldn't do)
+                    # branch is dead due to invalid (this means it ends up completing the LOI set, which it shouldn't do)
                     pass
             
             # stack is now empty; we've traversed the tree.
@@ -263,7 +263,7 @@ def main():
     max_depth = 9
     max_breadth = 3
 
-    trophies = get_trophies(TROPHIES_1PL_LOT)
+    trophies = get_trophies(TROPHIES_1PL_LOI)
     count_lot = 12 - sum([1 for x in trophies if not x[1]])
     seed, rolled_tags = get_seed()
     tags_to_roll = []

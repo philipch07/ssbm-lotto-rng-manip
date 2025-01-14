@@ -60,7 +60,7 @@ TROPHIES_1PL_1PO_TAGGED = [['warp star', True], ['ray gun', False], ['super scop
                             ['ryota hayami', False], ['love giant', True], ['heririn', False], ['excitebike', False], ['ducks', False], ['balloon fighter', False], 
                             ['pit', True], ['dr wright', False], ['donbe & hikari', False], ['ayumi tachibana', True], ['monster', False]]
 
-TROPHIES_1PL_LOT = [['ray gun', True], ['super scope', True], ['fire flower', True], ['star rod', True], ['home-run bat', True], ['fan', True], 
+TROPHIES_1PL_LOI = [['ray gun', True], ['super scope', True], ['fire flower', True], ['star rod', True], ['home-run bat', True], ['fan', True], 
                 ['red shell', False], ['flipper', True], ['mr. saturn', True], ['bob-omb', True], ['super mushroom', True], ['starman mario', True], 
                 ['barrel cannon', True], ['party ball', True], ['crate', True], ['barrel', True], ['capsule', True], ['egg', True], ['squirtle', True], 
                 ['blastoise', True], ['clefairy', True], ['weezing', True], ['chansey', False], ['goldeen', True], ['snorlax', True], 
